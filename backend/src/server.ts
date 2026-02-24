@@ -4,7 +4,7 @@ import cors from "cors";
 const app = express();
 import pool from './config/db';
 
-const port = 3000;
+const port = 3001;
 
 app.use(cors(
     {
