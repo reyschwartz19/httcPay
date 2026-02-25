@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -26,9 +26,14 @@ model Admin {
   createdAt DateTime @default(now())
 }
 
+model AdminSetting {
+  id Int @id @default(autoincrement())
+  minimumPaymentAmount Float
+}
+
 model SchoolYear {
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
   isActive Boolean @default(false)
   payments Payment[]
 }
@@ -41,7 +46,7 @@ model Department {
 
 model Level {
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
   payments Payment[]
 }
 
