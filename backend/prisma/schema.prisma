@@ -24,6 +24,7 @@ model Admin {
   username String @unique
   password String
   createdAt DateTime @default(now())
+  refreshTokens RefreshToken[]
 }
 
 model AdminSetting {
@@ -69,4 +70,13 @@ model Payment {
   schoolYear  SchoolYear @relation(fields: [schoolYearId], references: [id])
 
   @@unique([matricule, schoolYearId])
+}
+
+model RefreshToken {
+  id String @id @default(uuid())
+  token String @unique
+  adminId Int
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
