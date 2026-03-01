@@ -4,6 +4,7 @@ const app = express();
 
 import paymentRouter from "./routes/payment.route";
 import authRouter from "./routes/auth.route";
+import ReferenceRouter from "./routes/references.route";
 
 const port = 3001;
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/payments", paymentRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/references", ReferenceRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
