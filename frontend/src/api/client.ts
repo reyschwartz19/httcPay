@@ -16,7 +16,7 @@ export const fetcher = async <T> (
         throw new Error(errorData.message || "An error occurred while fetching data.");
     }
     const data = await res.json();
-    return data as Promise<T>;
+    return data as T;
 }
 
 
