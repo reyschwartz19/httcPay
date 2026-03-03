@@ -1,12 +1,16 @@
 import { Request, Response } from "express";  
-import { getDepartments, getLevels } from "../services/references.service";
+import { getDepartments, getLevels, ReferenceDTO } from "../services/references.service";
 
 export const getDepartmentsController = async (req: Request, res: Response) => {
     try{
         const departments = await getDepartments();
+        const response: ReferenceDTO[] = departments.map(dept => ({
+            id: dept.id,
+            name: dept.name
+        }));
         res.status(200).json({
             success: true,
-            data: departments
+            data: response
         });
     }catch(error: unknown){
         if(error instanceof Error){
@@ -20,9 +24,17 @@ export const getDepartmentsController = async (req: Request, res: Response) => {
 export const getLevelsController = async (req: Request, res: Response) => {
     try{
         const levels = await getLevels();
+         const response: ReferenceDTO[] = levels.map(level => ({
+            id: level.id,
+            name: level.name
+        }));
         res.status(200).json({
             success: true,
-            data: levels
+            data: response
+        });
+        res.status(200).json({
+            success: true,
+            data: response
         });
     }catch(error: unknown){
         if(error instanceof Error){

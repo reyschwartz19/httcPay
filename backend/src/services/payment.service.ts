@@ -10,6 +10,16 @@ type CreatePaymentInput = {
     matricule: string;
 }
 
+export interface PaymentResponseDto {
+  id: number;
+  name: string;
+  matricule: string;
+  amount: number;
+  status: "PENDING" | "COMPLETED" | "FAILED";
+  internalRef: string;
+  createdAt: Date;
+}
+
 export async function createPayment(input: CreatePaymentInput) {
     const {name, amount, departmentId, levelId, matricule} = input;
 
