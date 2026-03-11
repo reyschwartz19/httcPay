@@ -18,3 +18,8 @@ export const fetchLevels = async () => {
 
     return response.data;
 }
+
+export const fetchMinimumAmount = async (): Promise <number> => {
+    const response = await fetcher<{success: boolean, data: number}>("/references/minimum-payment-amount");
+    return response.data;
+}

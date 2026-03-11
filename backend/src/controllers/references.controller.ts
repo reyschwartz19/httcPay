@@ -1,5 +1,5 @@
 import { Request, Response } from "express";  
-import { getDepartments, getLevels, ReferenceDTO } from "../services/references.service";
+import { getDepartments, getLevels, ReferenceDTO, getMinimunPaymentAmount } from "../services/references.service";
 
 export const getDepartmentsController = async (req: Request, res: Response) => {
     try{
@@ -35,6 +35,22 @@ export const getLevelsController = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             data: response
+        });
+    }catch(error: unknown){
+        if(error instanceof Error){
+            res.status(400).json({success: false, message: error.message});
+        } else {
+            res.status(500).json({success: false, message: "An unexpected error occurred"});
+        }
+    }
+}
+
+export const getMininmumPaymentAmountController = async (req: Request, res: Response) => {
+    try{
+        const amount = await getMinimunPaymentAmount();
+        res.status(200).json({
+            success: true,
+            data: amount
         });
     }catch(error: unknown){
         if(error instanceof Error){

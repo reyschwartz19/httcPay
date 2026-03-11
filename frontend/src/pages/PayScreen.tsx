@@ -1,29 +1,32 @@
 import logo from '../assets/images.jfif'
 import { ArrowDown, CreditCard } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { fetchDepartments, fetchLevels } from '../api/references';
+import { fetchDepartments, fetchLevels, fetchMinimumAmount } from '../api/references';
 import { createPayment } from '../api/payment';
 
 const PayScreen = () => {
 
-    const fixedAmount = 3500;
+    
     
     const [departments, setDepartments] = useState<{id: number, name: string}[]>([]);
     const [levels, setLevels] = useState<{id: number, name: string}[]>([]);
     const [name, setName] = useState("");
     const [matricule, setMatricule] = useState("");
-    const [amount, setAmount] = useState<number | null>(fixedAmount);   
+     const [minimumAmount, setMinimumAmount] = useState<number>(0);
+    const [amount, setAmount] = useState<number | null>(null);   
     const [selectedDepartment, setSelectedDepartment] = useState<number | null>(null);
     const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
-    const isInvalid = amount !== null && amount < fixedAmount;
+    const isInvalid = amount !== null && amount < minimumAmount;
+   
 
 
     useEffect(() => {
         const fetchReferences = async () => {
             try {
-                const [deptData, levelData] = await Promise.all([fetchDepartments(), fetchLevels()]);
+                const [deptData, levelData, minAmount] = await Promise.all([fetchDepartments(), fetchLevels(), fetchMinimumAmount()]);
                 setDepartments(deptData);
                 setLevels(levelData);
+                setMinimumAmount(minAmount);
             } catch (error) {
                 console.error("Error fetching references:", error);
             }
@@ -39,14 +42,14 @@ const PayScreen = () => {
             return;
         }
         if(isInvalid){
-            alert(`Amount must be at least ${fixedAmount}`);
+            alert(`Amount must be at least ${minimumAmount}`);
             return;
         }   
         try {
             const paymentData = {
                 name: name,
                 matricule: matricule,
-                amount: amount ?? fixedAmount,
+                amount: amount ?? minimumAmount,
                 departmentId: selectedDepartment,
                 levelId: selectedLevel
             }
@@ -70,7 +73,7 @@ const PayScreen = () => {
                 Proceed to Pay <ArrowDown className='inline-block ml-2 h-5 w-5 animate-bounce' />
             </button>
             <p className='text-white text-center mt-5 text flex items-center'>
-                <CreditCard className='inline-block mr-2 h-6 w-6 text-secondary' /> {fixedAmount}/Student
+                <CreditCard className='inline-block mr-2 h-6 w-6 text-secondary' /> {minimumAmount}/Student
             </p>
         </section>
         <section className='my-9 w-[90%] bg-white rounded-lg p-6 shadow-md'>
@@ -132,8 +135,12 @@ const PayScreen = () => {
                     id="amount" 
                     placeholder='Enter amount to pay'
                     value={amount ?? ''}
-                    onChange={(e) => setAmount(Number(e.target.value))}
-                    className={isInvalid ? 'border border-red-500 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500' : 'border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-primary'} 
+                    onChange={(e) => setAmount(e.target.value === '' ? null : Number(e.target.value))}
+                  className={`[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none border rounded-md p-2 focus:outline-none focus:ring-2 ${
+                            isInvalid 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 focus:ring-primary'
+                            }`}
                       />
                 </div>
                 <button 

@@ -33,3 +33,12 @@ export const getLevels = async (): Promise<ReferenceDTO[]> => {
     });
     return levels;
 }
+
+export const getMinimunPaymentAmount = async (): Promise<number> => {
+    const settings = await prisma.adminSetting.findUnique({
+        where: {
+            id: 1,
+        }
+    });
+    return settings?.minimumPaymentAmount || 0;
+}
