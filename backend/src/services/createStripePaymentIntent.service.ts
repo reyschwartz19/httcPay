@@ -17,19 +17,24 @@ export const createStripePaymentIntent = async ({
 }: {
     amount: number;
     internalRef: string;
-}) => {
+}): Promise<Stripe.PaymentIntent> => {
    
 
    
     try{
-        const paymentIntent = await stripe.paymentIntents.create({
+        const paymentIntent = await stripe.paymentIntents.create(
+            {
            amount,
            currency: "xaf",
            
            metadata: {
             internalRef
-           }
-        });
+           },
+        },
+        {
+            idempotencyKey: internalRef,
+        }
+    );
         return paymentIntent;
 
     } catch(error: unknown){

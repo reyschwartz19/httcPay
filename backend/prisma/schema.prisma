@@ -17,6 +17,7 @@ enum PaymentStatus {
   PENDING
   COMPLETED
   FAILED
+  CANCELLED
 }
 
 model Admin {
@@ -60,6 +61,7 @@ model Payment {
   status PaymentStatus @default(PENDING)
   providerTransactionId String? @unique
   createdAt DateTime @default(now())
+  paymentIntentId String? @unique
 
   departmentId Int
   levelId Int
