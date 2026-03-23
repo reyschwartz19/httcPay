@@ -24,6 +24,8 @@ export interface PaymentResponseDto {
 export async function createPayment(input: CreatePaymentInput) {
     const {name, amount, departmentId, levelId, matricule} = input;
 
+    const normalizedMatricule = matricule.trim().toUpperCase();
+
     
     const department  = await prisma.department.findUnique({
         where: {id: departmentId}
@@ -38,8 +40,39 @@ export async function createPayment(input: CreatePaymentInput) {
     if(!schoolYear){
         throw new Error("No active school year found");
     }
+
    
-    const settings = await prisma.adminSetting.findFirst();
+
+  return await prisma.$transaction(async (tx) => 
+    {  
+         const existingCompletedPayment = await tx.payment.findFirst({
+        where: {
+            matricule: normalizedMatricule,
+            schoolYearId: schoolYear.id,
+            status: "COMPLETED",
+        },
+    });
+    if (existingCompletedPayment) {
+        throw new Error("Payment already completed for this student this year");
+    }
+
+        
+        const pendingPayment = await tx.payment.findFirst({
+    where: {
+        matricule: normalizedMatricule,
+        schoolYearId: schoolYear.id,
+        status: "PENDING",
+        createdAt: {
+            gt: new Date(Date.now() - 10 * 60 * 1000), 
+        },
+    },
+});
+
+if (pendingPayment) {
+    return pendingPayment; 
+}
+
+    const settings = await tx.adminSetting.findFirst();
     if(!settings){
         throw new Error("Admin settings not found");
     }
@@ -47,13 +80,16 @@ export async function createPayment(input: CreatePaymentInput) {
         throw new Error(`Payment amount must be at least ${settings.minimumPaymentAmount}`);
     }
    
-    const level = await prisma.level.findUnique({
+    const level = await tx.level.findUnique({
         where: {id: levelId}
     });
     if(!level){
         throw new Error("Level not found");
     }
 
+    let retries = 3;
+
+    while(retries > 0){
     const internalRef = generateInternalRef();
 
     try{
@@ -61,7 +97,7 @@ export async function createPayment(input: CreatePaymentInput) {
             data: {
                 name,
                 amount,
-                matricule,
+                matricule: normalizedMatricule,
                 departmentId,
                 levelId,
                 schoolYearId: schoolYear.id,
@@ -75,11 +111,15 @@ export async function createPayment(input: CreatePaymentInput) {
             error instanceof Prisma.PrismaClientKnownRequestError &&
             error.code === "P2002"
         ){
-            throw new Error("A payment with the same internal reference already exists. Please try again.");
+           retries--;
+           continue;
         }
         throw error;
     }
+    }
 
+   throw new Error("Failed to generate unique payment reference")
+});
     function generateInternalRef(): string {
         const randoPart = crypto.randomBytes(4).toString("hex").toUpperCase();
         const timestampPart = Date.now().toString(36).toUpperCase();

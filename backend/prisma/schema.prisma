@@ -69,7 +69,7 @@ model Payment {
   level       Level      @relation(fields: [levelId], references: [id])
   schoolYear  SchoolYear @relation(fields: [schoolYearId], references: [id])
 
-  @@unique([matricule, schoolYearId])
+  
 }
 
 model RefreshToken {
