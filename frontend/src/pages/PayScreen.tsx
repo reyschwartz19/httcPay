@@ -1,4 +1,4 @@
-import logo from '../assets/images.jfif';
+
 import { ArrowDown, CreditCard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
@@ -116,10 +116,10 @@ const PayScreen = () => {
         <main className="bg-[#E5E4E2] min-h-screen w-screen flex flex-col items-center font-primary">
             
             <section className='bg-primary w-screen h-140 pt-15 flex flex-col items-center'>
-                <img src={logo} alt="uba logo" className='h-35 w-35' />
-                <h1 className='text-white text-center mt-5 text-4xl font-bold'>HTTC PAY</h1>
+              
+                <h1 className='text-white text-center mt-5 text-4xl font-bold'>STUDENT PAY</h1>
                 <p className='text-white text-center mt-5 text-2xl'>
-                    Secure and fast payments of student-dues
+                    Secure and fast payments of student-contributions
                 </p>
                 <button className='mx-auto py-4 px-6 mt-5 bg-white text-primary rounded-md font-bold cursor-pointer flex items-center'>
                     Proceed to Pay <ArrowDown className='inline-block ml-2 h-5 w-5 animate-bounce' />
