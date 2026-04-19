@@ -1,0 +1,48 @@
+
+services:
+ db:
+  image: postgres:15
+  ports:
+   - 5432:5432
+  environment:
+    POSTGRES_USER: username123
+    POSTGRES_PASSWORD: password123
+    POSTGRES_DB: mydb123
+  volumes:
+    - data:/var/lib/postgresql/data
+  restart: unless-stopped
+ adminer:
+  image: adminer:latest
+  restart: unless-stopped
+  ports:
+   - 8080:8080
+  depends_on:
+   - db   
+
+ studpaybackend:
+  build: ./backend
+  container_name: studpaybackend
+  ports:
+   - 3001:3001
+  env_file:
+   - ./backend/.env
+  restart:
+    unless-stopped
+  depends_on:
+   - db
+
+ studpayfrontend:
+  build: ./frontend
+  container_name: studpayfrontend
+  ports:
+   - 5173:5173
+  env_file:
+   - ./frontend/.env
+  restart:
+    unless-stopped
+  depends_on:
+   - studpaybackend
+
+volumes:
+  data:
+    
