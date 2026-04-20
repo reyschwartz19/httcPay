@@ -92,6 +92,10 @@ studPay/
 2. Create environment files:
    
    **Backend (.env)**:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+   Configure the following variables in `backend/.env`:
    ```env
    DATABASE_URL="postgresql://username123:password123@db:5432/mydb123"
    STRIPE_SECRET_KEY="sk_test_..."
@@ -100,6 +104,10 @@ studPay/
    ```
    
    **Frontend (.env)**:
+   ```bash
+   cp frontend/.env.example frontend/.env
+   ```
+   Configure the following variables in `frontend/.env`:
    ```env
    VITE_API_URL="http://studpaybackend:3001/api"
    VITE_STRIPE_PUBLIC_KEY="pk_test_..."
@@ -136,6 +144,10 @@ studPay/
 
 3. Configure Environment Variables:
    Create a `.env` file in the `backend/` directory:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+   Update the values in `backend/.env`:
    ```env
    DATABASE_URL="postgresql://user:password@localhost:5432/studpay"
    STRIPE_SECRET_KEY="sk_test_..."
